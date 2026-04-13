@@ -26,19 +26,17 @@ body:graphql:vars {
 }
 
 tests {
-  test("status is 200", function() {
-    expect(res.status).to.equal(200);
-  });
+  const { assertSuccess, assertUserShape } = require('./lib/graphql');
 
-  test("no GraphQL errors", function() {
-    expect(res.body.errors).to.be.undefined;
+  test("status 200 and no GraphQL errors", function() {
+    assertSuccess(res);
   });
 
   test("returns the user created in previous test", function() {
-    const user = res.body.data.user;
-    expect(user).to.not.be.null;
-    expect(user.id).to.equal(bru.getVar("createdUserId"));
-    expect(user.name).to.equal("Carol Smith");
-    expect(user.email).to.equal("carol@example.com");
+    assertUserShape(res.body.data.user, {
+      id: bru.getVar("createdUserId"),
+      name: "Carol Smith",
+      email: "carol@example.com"
+    });
   });
 }

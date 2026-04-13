@@ -24,12 +24,10 @@ body:graphql:vars {
 }
 
 tests {
-  test("status is 200", function() {
-    expect(res.status).to.equal(200);
-  });
+  const { assertSuccess } = require('./lib/graphql');
 
-  test("no GraphQL errors", function() {
-    expect(res.body.errors).to.be.undefined;
+  test("status 200 and no GraphQL errors", function() {
+    assertSuccess(res);
   });
 
   test("data.users is an array", function() {
