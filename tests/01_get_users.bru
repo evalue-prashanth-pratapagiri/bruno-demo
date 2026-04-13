@@ -1,0 +1,44 @@
+meta {
+  name: Get All Users
+  type: graphql
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}
+  body: graphql
+}
+
+body:graphql {
+  query {
+    users {
+      id
+      name
+      email
+    }
+  }
+}
+
+body:graphql:vars {
+  {}
+}
+
+tests {
+  test("status is 200", function() {
+    expect(res.status).to.equal(200);
+  });
+
+  test("no GraphQL errors", function() {
+    expect(res.body.errors).to.be.undefined;
+  });
+
+  test("data.users is an array", function() {
+    expect(res.body.data.users).to.be.an("array");
+  });
+
+  test("seed users exist", function() {
+    const names = res.body.data.users.map(u => u.name);
+    expect(names).to.include("Alice Nguyen");
+    expect(names).to.include("Bob Patel");
+  });
+}

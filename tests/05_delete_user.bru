@@ -1,0 +1,36 @@
+meta {
+  name: Delete User
+  type: graphql
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}
+  body: graphql
+}
+
+body:graphql {
+  mutation DeleteUser($id: ID!) {
+    deleteUser(id: $id)
+  }
+}
+
+body:graphql:vars {
+  {
+    "id": "{{createdUserId}}"
+  }
+}
+
+tests {
+  test("status is 200", function() {
+    expect(res.status).to.equal(200);
+  });
+
+  test("no GraphQL errors", function() {
+    expect(res.body.errors).to.be.undefined;
+  });
+
+  test("deleteUser returns true", function() {
+    expect(res.body.data.deleteUser).to.equal(true);
+  });
+}

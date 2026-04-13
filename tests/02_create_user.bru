@@ -1,0 +1,48 @@
+meta {
+  name: Create User
+  type: graphql
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}
+  body: graphql
+}
+
+body:graphql {
+  mutation CreateUser($name: String!, $email: String!) {
+    createUser(name: $name, email: $email) {
+      id
+      name
+      email
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "name": "Carol Smith",
+    "email": "carol@example.com"
+  }
+}
+
+tests {
+  test("status is 200", function() {
+    expect(res.status).to.equal(200);
+  });
+
+  test("no GraphQL errors", function() {
+    expect(res.body.errors).to.be.undefined;
+  });
+
+  test("user created with correct fields", function() {
+    const user = res.body.data.createUser;
+    expect(user.name).to.equal("Carol Smith");
+    expect(user.email).to.equal("carol@example.com");
+    expect(user.id).to.be.a("string");
+  });
+
+  test("store created user id for chaining", function() {
+    bru.setVar("createdUserId", res.body.data.createUser.id);
+  });
+}

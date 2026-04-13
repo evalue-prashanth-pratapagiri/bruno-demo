@@ -1,0 +1,46 @@
+meta {
+  name: Update User
+  type: graphql
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}
+  body: graphql
+}
+
+body:graphql {
+  mutation UpdateUser($id: ID!, $name: String, $email: String) {
+    updateUser(id: $id, name: $name, email: $email) {
+      id
+      name
+      email
+    }
+  }
+}
+
+body:graphql:vars {
+  {
+    "id": "{{createdUserId}}",
+    "name": "Carol Johnson",
+    "email": "carol.johnson@example.com"
+  }
+}
+
+tests {
+  test("status is 200", function() {
+    expect(res.status).to.equal(200);
+  });
+
+  test("no GraphQL errors", function() {
+    expect(res.body.errors).to.be.undefined;
+  });
+
+  test("user fields are updated", function() {
+    const user = res.body.data.updateUser;
+    expect(user).to.not.be.null;
+    expect(user.id).to.equal(bru.getVar("createdUserId"));
+    expect(user.name).to.equal("Carol Johnson");
+    expect(user.email).to.equal("carol.johnson@example.com");
+  });
+}
